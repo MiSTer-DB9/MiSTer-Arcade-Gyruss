@@ -3,6 +3,7 @@
 module GYRUSS_SOUND
 (
 	input				MCLK,
+	input				SCLK,
 	input 			RESET,
 
 	input				SNDRQ,
@@ -22,7 +23,7 @@ wire  [7:0] CPUOD;
 wire CPUCL,CPUMR,CPUMW,CPUIR,CPUIW;
 wire CPUIRS;
 
-SNDCGEN2 cgen2(MCLK,CPUCL);
+assign CPUCL = SCLK;
 
 
 wire		  romcs;
@@ -97,34 +98,6 @@ Z80IP sndcpu(
 	.intreq(CPUIRQ),.intrst(CPUIRS),
 	.nmireq(1'b0),.nmirst()
 );
-
-endmodule
-
-
-module SNDCGEN( input in, output reg out );
-// in: 48.0MHz -> out: 14.31818MHz
-reg [6:0] count;
-always @( posedge in ) begin
-	if (count > 7'd48) begin
-		count <= count - 7'd48;
-		out <= ~out;
-	end
-   else count <= count + 7'd71;
-end
-endmodule
-
-
-module SNDCGEN2
-(
-	input  MCLK,
-	output CPUCL
-);
-
-wire CLK14M;
-SNDCGEN cgen(MCLK,CLK14M);
-reg [1:0] clkdiv;
-always @(posedge CLK14M) clkdiv <= clkdiv+1;
-assign CPUCL = clkdiv[1];
 
 endmodule
 
@@ -288,10 +261,38 @@ wire [16:0] BG_R = (p2A*64+p2B*64+p2C*64+p3A*64+p3B*64+p3C*64);
 wire [19:0] MixL = SE_L+BG_L;
 wire [19:0] MixR = SE_R+BG_R;
 
+wire [19:0] mL;
+wire [19:0] mR;
+
+wire [16:0] K = 16'd32012;		// 8000Hz LPF
+LPF2 fL(MCLK,SMPCL,K,MixL,mL);
+LPF2 fR(MCLK,SMPCL,K,MixR,mR);
+
 always @(posedge MCLK) begin
-	if (SMPCL) begin
-		SND_L <= {16{MixL[19:16]!=0}}|(MixL[15:0]);
-		SND_R <= {16{MixR[19:16]!=0}}|(MixR[15:0]);
+	if (~SMPCL) begin
+		SND_L <= {16{mL[19:16]!=0}}|(mL[15:0]);
+		SND_R <= {16{mR[19:16]!=0}}|(mR[15:0]);
+	end
+end
+
+endmodule
+
+
+module LPF2
+(
+	input				CLK,
+	input				EN,
+	input [16:0]	K,
+	input [19:0]	INu,
+	
+	output reg [19:0] O
+);
+wire [19:0] I = INu;
+reg  [19:0]	M;
+always @(posedge CLK) begin
+	if (EN) begin
+		M <= (M+(((I-M)*K)/65536))/2;
+		O <= M;
 	end
 end
 
@@ -431,7 +432,7 @@ wire [15:0] I = {3'h0,INu8,5'h0};
 reg  [15:0]	M;
 always @(posedge CLK) begin
 	if (EN) begin
-		M <=(FP==2'b00) ? I : (M+(((I-M)*K)/65536));
+		M <=(FP!=2'b00) ? (M+(((I-M)*K)/65536))/2 : I;
 		O <= M;
 	end
 end
