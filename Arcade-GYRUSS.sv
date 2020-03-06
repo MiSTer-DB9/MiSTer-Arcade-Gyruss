@@ -78,8 +78,8 @@ assign VGA_F1    = 0;
 
 wire   joy_split, joy_mdsel;
 wire   [5:0] joy_in = {USER_IN[6],USER_IN[3],USER_IN[5],USER_IN[7],USER_IN[1],USER_IN[2]};
-assign USER_OUT  = |status[31:30] ? {3'b111,joy_split,3'b111,joy_mdsel} : '1;
-assign USER_MODE = |status[31:30] ;
+assign USER_OUT  = |status[63:62] ? {3'b111,joy_split,3'b111,joy_mdsel} : '1;
+assign USER_MODE = |status[63:62] ;
 assign USER_OSD  = joydb9md_1[7] & joydb9md_1[5]; // A�adir esto para OSD
 
 
@@ -100,7 +100,7 @@ localparam CONF_STR = {
 	"O35,Scandoubler Fx,None,HQ2x,CRT 25%,CRT 50%,CRT 75%;",
 	"H0O6,Orientation,Vert,Horz;",
 	"-;",
-	"OUV,Serial SNAC DB9MD,Off,1 Player,2 Players;",
+	"oUV,Serial SNAC DB9MD,Off,1 Player,2 Players;",
 	"-;",
 	"DIP;",
 	"-;",
@@ -133,7 +133,7 @@ pll pll
 
 ///////////////////////////////////////////////////
 
-wire [31:0] status;
+wire [63:0] status;
 wire  [1:0] buttons;
 wire        forced_scandoubler;
 wire		direct_video;
@@ -151,7 +151,7 @@ wire [15:0] joystick_analog_1;
 
 wire [21:0]	gamma_bus;
 
-wire [15:0] joystk1 = |status[31:30] ? {
+wire [15:0] joystk1 = |status[63:62] ? {
 	joydb9md_1[8] | (joydb9md_1[7] & joydb9md_1[4]),// Coin -> 10 *  Mode or Start + B
 	joydb9md_1[11],// _start_2	-> 9 * Z (dummy)
 	joydb9md_1[7], // _start_1	-> 8 * Start
@@ -163,7 +163,7 @@ wire [15:0] joystk1 = |status[31:30] ? {
 	} 
 	: joystk1_USB;
 
-wire [15:0] joystk2 =  status[31]    ? {
+wire [15:0] joystk2 =  status[63]    ? {
 	joydb9md_2[8] | (joydb9md_2[7] & joydb9md_2[4]),// Coin -> 10 *  Mode or Start + B
 	joydb9md_2[7], // _start_2	-> 9 * Start
 	joydb9md_2[11],// _start_1	-> 8 (dummy)
@@ -173,7 +173,7 @@ wire [15:0] joystk2 =  status[31]    ? {
 	joydb9md_2[1], // btn_left	-> 1 * L
 	joydb9md_2[0], // btn_right	-> 0 * R 
 	} 
-	: status[30] ? joystk1_USB : joystk2_USB;
+	: status[62] ? joystk1_USB : joystk2_USB;
 
 
 reg [15:0] joydb9md_1,joydb9md_2;
