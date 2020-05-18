@@ -4,7 +4,7 @@
 set -euo pipefail
 
 UPSTREAM_REPO="https://github.com/MrX-8B/MiSTer-Arcade-Gyruss.git"
-CORE_NAME="Arcade-Gyruss"
+CORE_NAME="Arcade-GYRUSS"
 MAIN_BRANCH="master"
 
 echo "Fetching upstream:"
