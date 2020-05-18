@@ -3,7 +3,7 @@
 
 set -euo pipefail
 
-CORE_NAME="Arcade-Gyruss"
+CORE_NAME="Arcade-GYRUSS"
 MAIN_BRANCH="master"
 COMPILATION_OUTPUT="output_files/Arcade-GYRUSS.rbf"
 
