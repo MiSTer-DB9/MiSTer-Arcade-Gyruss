@@ -216,7 +216,9 @@ wire       extended = (~pressed ? (ps2_key_raw[23:16] == 8'he0) : (ps2_key_raw[1
 
 reg  [9:0] byte_cnt;
 
-always@(posedge clk_sys) begin
+// [MiSTer-DB9-Pro BEGIN] - named so db9_key_gate can reach in via uio_block.cmd
+always@(posedge clk_sys) begin : uio_block
+// [MiSTer-DB9-Pro END]
 	reg [15:0] cmd;
 	reg  [2:0] b_wr;
 	reg  [2:0] stick_idx;
