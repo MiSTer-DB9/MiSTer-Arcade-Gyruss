@@ -58,7 +58,6 @@ source sys/sys_analog.tcl
 source files.qip
 set_global_assignment -name FLOW_ENABLE_RTL_VIEWER OFF
 
-set_global_assignment -name VERILOG_FILE src/joydb9md.v
 set_global_assignment -name CDF_FILE jtag.cdf
 set_global_assignment -name QIP_FILE sys/sys.qip
 set_global_assignment -name QIP_FILE src/T80/T80.qip
