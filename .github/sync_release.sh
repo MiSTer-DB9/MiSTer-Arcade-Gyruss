@@ -8,7 +8,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/retry.sh"
 
 UPSTREAM_REPO="https://github.com/MrX-8B/MiSTer-Arcade-Gyruss.git"
-CORE_NAME=(Arcade-GYRUSS)
+CORE_NAME=(Arcade-Gyruss)
 # Upstream release-file grep pattern (per element of CORE_NAME). Same length as
 # CORE_NAME; for base sections this matches RELEASE_CORE_NAME, for variant-only
 # sections (e.g. NeoGeo_24MHz_cpu_only) it carries the base name that upstream's

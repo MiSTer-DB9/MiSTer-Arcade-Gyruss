@@ -13,7 +13,7 @@ source "${SCRIPT_DIR}/retry.sh"
 # shellcheck source=compute_source_hash.sh
 source "${SCRIPT_DIR}/compute_source_hash.sh"
 
-CORE_NAME=(Arcade-GYRUSS)
+CORE_NAME=(Arcade-Gyruss)
 MAIN_BRANCH="master"
 COMPILATION_INPUT=(Arcade-GYRUSS.qpf)
 COMPILATION_OUTPUT=(output_files/Arcade-GYRUSS.rbf)
