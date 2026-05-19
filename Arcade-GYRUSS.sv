@@ -83,9 +83,13 @@ assign VGA_F1    = 0;
 //assign USER_OUT  = '1;
 
 // [MiSTer-DB9 BEGIN] - DB9/SNAC8 support: joydb wrapper
+// [MiSTer-DB9 RESERVED status bits: 63:62 61]
+// Highest free status bits used here so this fork's sys/hps_io.v stays
+// bit-identical to upstream (it is a 64-bit-status arcade variant; widening
+// it to 128 bits would cause future upstream merge conflicts).
 wire         CLK_JOY = CLK_50M;                 // Assign clock between 40-50Mhz
-wire   [1:0] joy_type        = status[127:126]; // 0=Off, 1=Saturn, 2=DB9MD, 3=DB15
-wire         joy_2p          = status[125];
+wire   [1:0] joy_type        = status[63:62];   // 0=Off, 1=Saturn, 2=DB9MD, 3=DB15
+wire         joy_2p          = status[61];
 wire         joy_db9md_en    = (joy_type == 2'd2);
 wire         joy_db15_en     = (joy_type == 2'd3);
 wire         joy_any_en      = |joy_type;
@@ -142,9 +146,9 @@ localparam CONF_STR = {
 	"O35,Scandoubler Fx,None,HQ2x,CRT 25%,CRT 50%,CRT 75%;",
 	"H0O6,Orientation,Vert,Horz;",
 	"-;",
-		// [MiSTer-DB9-Pro BEGIN] - Saturn-first joy_type (canonical bit notation)
-	"O[127:126],UserIO Joystick,Off,Saturn,DB9MD,DB15;",
-	"O[125],UserIO Players, 1 Player,2 Players;",
+		// [MiSTer-DB9-Pro BEGIN] - Saturn-first joy_type at high free bits 63:61
+	"O[63:62],UserIO Joystick,Off,Saturn,DB9MD,DB15;",
+	"O[61],UserIO Players, 1 Player,2 Players;",
 	// [MiSTer-DB9-Pro END]
 	"-;",
 	"DIP;",
@@ -178,9 +182,7 @@ pll pll
 
 ///////////////////////////////////////////////////
 
-// [MiSTer-DB9 BEGIN] - widened to 128 bits for joy_type at [127:126] and joy_2p at [125]
-wire [127:0] status;
-// [MiSTer-DB9 END]
+wire [63:0] status;
 wire  [1:0] buttons;
 wire        forced_scandoubler;
 wire		direct_video;
